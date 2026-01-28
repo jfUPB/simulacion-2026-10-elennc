@@ -201,37 +201,171 @@ class Walker {
 - *Coloca en enlace a tu sketch en p5.js en tu bitácora.*
 - *Selecciona una captura de pantalla de tu sketch y colócala en tu bitácora.*
 
+Lo que hice fue utilizar el ejemplo del punto 3 como base, pero modificándolo para que los puntos en vez de hacer una línea se distribuyeran por la pantalla, tendiendo a acomodarse en el centro usando randomGaussian(). Utilicé la función dist() de p5js para tomar la distancia entre el punto y el centro del canvas (200, 200), y además hice que entre más cerca esté el punto del centro, más grande sea el punto. La opacidad es de 80% para que se note mejor la acumulación por la tendencia al centro causada por el randomGaussian().
+
 ```jsx
 function setup() {
   createCanvas(400, 400);
 
-  background([234,157,174]);
+  background(242, 239, 174);
 }
 
 function draw() {
   noStroke();
-  
-  x = randomGaussian(200, 40);
-  y = randomGaussian(200, 40);
+
+  // Gaussian distribution 
+  x = randomGaussian(200, 100);
+  y = randomGaussian(200, 100);
 
    // Distancia al centro
   let distance = dist(x, y, 200, 200);
 
   // cerca = grande, lejos = pequeño
-  let diameter = map(distance, 0, 100, 8, 2);
+  let diameter = map(distance, 0, 200, 8, 1);
 
-  // lejos = más transparente
-  let alpha = map(distance, 0, 200, 80, 5);
-
-  fill([69,21,27], alpha);
+  fill(69,21,27,80);
   circle(x, y, diameter);
 }
 ```
 
 [Link a proyecto de p5.js](https://editor.p5js.org/elennc/full/yWX1rtb-v)
 
+<img width="497" height="498" alt="image" src="https://github.com/user-attachments/assets/3247d4d4-742d-491b-af57-d40bf5119791" />
+
+![u1a4](https://github.com/user-attachments/assets/009f57f5-4af8-4e37-93e4-c9a1b37c1a33)
+
+
+### Actividad 05
+
+- *Crea un nuevo sketch en p5.js donde modifiques uno de los ejemplos anteriores y adiciones de Lévy flight.*
+- *Explica por qué usaste esta técnica y qué resultados esperabas obtener.*
+- *Copia el código en tu bitácora.*
+- *Coloca en enlace a tu sketch en p5.js en tu bitácora.*
+- *Selecciona una captura de pantalla de tu sketch y colócala en tu bitácora.*
+
+```jsx
+// The Nature of Code
+// Daniel Shiffman
+// http://natureofcode.com
+
+let walker;
+
+function setup() {
+  createCanvas(740, 560);
+  walker = new Walker();
+  background(206, 184, 214);
+}
+
+function draw() {
+  walker.step();
+  walker.show();
+}
+
+function levyFlight() {
+  while (true) {
+    let step = random(0, 15);   // candidato (tamaño del paso)
+    let probability = random(0, 1);
+
+    // cuanto más pequeño el paso, más probable que sea aceptado
+    if (probability < 1 / (step + 1)) {
+      return step;
+    }
+  }
+}
+
+class Walker {
+  constructor() {
+    this.x = width / 2;
+    this.y = height / 2;
+
+    this.lastChoice=null; // no hay last choice si acaba de empezar,,
+
+  }
+
+  show() {
+    //stroke([126, 31, 161]);
+    //point(this.x, this.y);
+    fill(126, 31, 161);
+    circle(this.x, this.y, 4);
+  }
+  
+  
+
+  step() {
+    let choice;
+    let stepSize = levyFlight();
+
+    do{
+      choice = floor(random(4));
+    } while (choice == this.lastChoice) // escoge dirección hasta que sea diferente a la última. en el primer paso solo hace esto una vez xq se inició vacía
+    
+    
+    if (choice == 0) {
+      this.x += stepSize;
+    } else if (choice == 1) {
+      this.x -= stepSize;
+    } else if (choice == 2) {
+      this.y += stepSize;
+    } else {
+      this.y -= stepSize;
+    }
+
+    this.lastChoice = choice; //almaceno el nuevo paso más reciente en la variable para utilizarlo en el siguiente ciclo
+
+  }
+}
+```
+
+Utilicé nuevamente el Walker como base para este punto, adicionándole una función llamada levyFlight() que determina el tamaño del paso que tomará el walker. El tamaño de un paso está en el rango de 0 a 15, y se compara con la probabilidad utilizando la ecuación 1/(step+1). Escogimos esta función porque es inversamente proporcional al paso pero que nunca llegue a ser 0.
+
+ Si al remplazar el valor del paso en la ecuación anterior el resultado es mayor a la probabilidad escogida al azar, el programa devuelve el valor del paso para poder utilizarlo en la función de step() del walker. Así asegurammos que los pasos cortos sigan siendo más probables que los pasos cortos.
+
+```jsx
+function levyFlight() {
+  while (true) {
+    let step = random(0, 15);   // candidato (tamaño del paso)
+    let probability = random(0, 1);
+
+    // cuanto más pequeño el paso, más probable que sea aceptado
+    if (probability < 1 / (step + 1)) {
+      return step;
+    }
+  }
+}
+```
+
+Ahora en vez de sumar una unidad en cualquier dirección que es escogida sumamos la cantidad que se determinó para el siguiente paso. Así queda la función de step:
+```jsx
+step() {
+    let choice;
+    let stepSize = levyFlight();
+
+    do{
+      choice = floor(random(4));
+    } while (choice == this.lastChoice) // escoge dirección hasta que sea diferente a la última. en el primer paso solo hace esto una vez xq se inició vacía
+    
+    
+    if (choice == 0) {
+      this.x += stepSize;
+    } else if (choice == 1) {
+      this.x -= stepSize;
+    } else if (choice == 2) {
+      this.y += stepSize;
+    } else {
+      this.y -= stepSize;
+    }
+
+    this.lastChoice = choice; //almaceno el nuevo paso más reciente en la variable para utilizarlo en el siguiente ciclo
+
+  }
+```
+![u1a5](https://github.com/user-attachments/assets/934696e0-034a-41f5-9f62-7dffec3ffb00)
+
+
+
 ## Bitácora de aplicación 
 
 
 
 ## Bitácora de reflexión
+
