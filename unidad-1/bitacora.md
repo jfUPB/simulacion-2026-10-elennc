@@ -207,32 +207,54 @@ Lo que hice fue utilizar el ejemplo del punto 3 como base, pero modificándolo p
 function setup() {
   createCanvas(400, 400);
 
-  background(242, 239, 174);
+  background(255);
 }
 
 function draw() {
+  // Style the circles.
   noStroke();
+  
 
-  // Gaussian distribution 
-  x = randomGaussian(200, 100);
-  y = randomGaussian(200, 100);
+  // Gaussian distribution with a mean of 50 and sd of 1.
+  x = randomGaussian(200, 40);
+  y = randomGaussian(200, 40);
 
    // Distancia al centro
   let distance = dist(x, y, 200, 200);
 
   // cerca = grande, lejos = pequeño
-  let diameter = map(distance, 0, 200, 8, 1);
+  let diameter = map(distance, 0, 100, 8, 2, true);
 
-  fill(69,21,27,80);
-  circle(x, y, diameter);
+  let color = floor(random(5));
+  
+switch (color) {
+    case 0:
+      fill(68, 48, 37, 100);
+      break;
+    case 1:
+      fill(127, 89, 53, 100);
+      break;
+    case 2:
+      fill(171, 127, 102, 100);
+      break;
+    case 3:
+      fill(236, 156, 157, 100);
+      break;
+    case 4:
+      fill(242, 207, 203, 100);
+      break;
+    }
+    circle(x, y, diameter);
 }
+
 ```
+También quise hacer que cada punto sea de un color aleatorio de un total de 5, para lo que usé un switch-case.
 
-[Link a proyecto de p5.js](https://editor.p5js.org/elennc/full/yWX1rtb-v)
+[**Link a proyecto de p5.js**](https://editor.p5js.org/elennc/full/yWX1rtb-v)
 
-<img width="497" height="498" alt="image" src="https://github.com/user-attachments/assets/3247d4d4-742d-491b-af57-d40bf5119791" />
+<img width="496" height="495" alt="image" src="https://github.com/user-attachments/assets/de31f330-e6d8-4a1e-b8da-d788033b885e" />
 
-![u1a4](https://github.com/user-attachments/assets/009f57f5-4af8-4e37-93e4-c9a1b37c1a33)
+![u1a4](https://github.com/user-attachments/assets/2b17080b-c635-4cde-a6cf-0a3855c1c06f)
 
 
 ### Actividad 05
@@ -320,6 +342,7 @@ Utilicé nuevamente el Walker como base para este punto, adicionándole una func
 
  Si al remplazar el valor del paso en la ecuación anterior el resultado es mayor a la probabilidad escogida al azar, el programa devuelve el valor del paso para poder utilizarlo en la función de step() del walker. Así asegurammos que los pasos cortos sigan siendo más probables que los pasos cortos.
 
+
 ```jsx
 function levyFlight() {
   while (true) {
@@ -359,13 +382,16 @@ step() {
 
   }
 ```
+
+Viendo que el Walker original no recorre gran parte de la pantalla esperaba notar que ahora parecía saltar de un lado a otro moviéndose como si buscara comida, como describe la guía, y esto es exactamente lo que pasó. Ahora tiene más área de recorridp gracias a que reduce la posibilidad de que vuelva a pisar lugares donde ya estuvo antes.
 ![u1a5](https://github.com/user-attachments/assets/934696e0-034a-41f5-9f62-7dffec3ffb00)
 
-
+[**Link a proyecto de p5.js**](https://editor.p5js.org/elennc/sketches/SlIKgbUGm)
 
 ## Bitácora de aplicación 
 
 
 
 ## Bitácora de reflexión
+
 
