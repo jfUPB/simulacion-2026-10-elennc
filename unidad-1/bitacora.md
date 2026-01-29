@@ -191,6 +191,7 @@ class Walker {
 ```
 ![u1a3](https://github.com/user-attachments/assets/e13aaa16-dd27-4ea2-9a49-63a14fd18e4c)
 
+[Link a proyecto de p5.js](https://editor.p5js.org/elennc/sketches/0yg5ZpLZE)
 
 ### Actividad 04
 
@@ -393,5 +394,6 @@ Viendo que el Walker original no recorre gran parte de la pantalla esperaba nota
 
 
 ## Bitácora de reflexión
+
 
 
