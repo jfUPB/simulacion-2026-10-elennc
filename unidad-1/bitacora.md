@@ -390,10 +390,209 @@ Viendo que el Walker original no recorre gran parte de la pantalla esperaba nota
 [**Link a proyecto de p5.js**](https://editor.p5js.org/elennc/sketches/SlIKgbUGm)
 
 ## Bitácora de aplicación 
+### Actividad 07
 
+*Vas a crear una obra generativa interactiva en tiempo real utilizando los conceptos de aleatoriedad que has aprendido en esta unidad.*
+
+*Tu obra debe:*
+
+- *Usar al menos tres conceptos estudiados en esta unidad COMBINADOS de manera creativa y coherente.*
+- *Tu obra de ser interactiva y generativa en tiempo real. Puedes usar el mouse, el teclado o cualquier otro sensor de entrada para interactuar con la obra.*
+
+Incluir:
+
+- *Un texto donde expliques el concepto de obra generativa.*
+- *Copia el código en tu bitácora.*
+- *Coloca en enlace a tu sketch en p5.js en tu bitácora.*
+- *Selecciona una captura de pantalla de tu sketch y colócala en tu bitácora.*
+
+Una obra generativa es una fabricación artística creada a partir de código o un sistema que trabaja por sí solo pero que fue diseñado por un artista. Es decir, es la creación de un producto a partir de conceptos matemáticos que corre un programa con el fin de tener algo estéticamente satisfactorio.
+
+Para mi proyecto, quería que pareciera un animal, ya que me quedó sonando eso de una de las explicaciones del texto guía, entonces utilicé un comportamiento parecido al de un walker normal, incluyendo el Lévy Flight para llegar a ese comportamiento animal que buscaba, que hace que se mueva más en la pantalla por la introducción de la probabilidad de los saltos largos. Como en el ejercicio 5, creé una función llamada levyStep() que determina la longitud de los pasos de mi Walker.
+
+```jsx
+function levyFlight() {
+  while (true) {
+    let step = random(0, 50);   // candidato (tamaño del paso)
+    let probability = random(0, 1);
+
+    // cuanto más pequeño el paso, más probable que sea aceptado
+    if (probability < 1 / (step + 1)) {
+      return step;
+    }
+  }
+}
+```
+
+Luego, llamé esta función en mi draw() para tener el tamaño del paso en cada uno de mis loops.
+
+```jsx
+let stepSize = levyFlight();
+```
+
+Lo siguiente entonces fue hacer que mi Walker tomara el paso con la distancia adecuada, pero sin que saltara de un lugar a otro de forma errática sino suavemente, por lo que implementé un Perlin Noise y una función de map() para determinar las coordenadas del paso, negativas o positivas, y dependiendo del tamaño del step definido por levyFlight(). El movimiento en y está un poco desfazado con respecto a x para darle más naturalidad al asunto. 
+
+```jsx
+// posición del cosito,
+let dx = map(noise(t), 0, 1, -stepSize, stepSize);
+let dy = map(noise(t + 1000), 0, 1, -stepSize, stepSize);
+```
+
+Luego está la interacción con el mouse, que siguiendo el concepto de animal, hace que el walker se acerque al mouse ligeramente, sin estar siguiéndolo directamente, como si fuera con curiosidad. Ubicamos un vector desde el Walker hasta el mouse, para tener su dirección, y calculamos la distancia entre ambos. Calculamos la fuerza con la que el mouse afectará al Walker diciendo que entre más lejos esté del mouse, menos será la atracción. Finalmente, calculamos la posición del Walker tomando la posición a la que iría naturalmente sin influencia del mouse (dx, dy) y sumándosela a la posición actual, para después sumar también la dirección de la fuerza de atracción del mouse (mx, my) en cada una de sus componentes, la influencia que esta fuerza tiene en su movimiento (0.025) para que no salte, y finalmente la fuerza misma determinada por la distancia del mouse al Walker.
+
+```jsx
+	let mx = mouseX - x; // posición del mouse menos la posición de la bolita
+  let my = mouseY - y;
+
+  // distancia de bolita al mouse
+  let distance = dist(x, y, mouseX, mouseY);
+
+  // mouse más cerca = más fuerza que lo atrae
+  let mouseForce = map(distance, 0, width, 1.5, 0);
+
+  // influencia del mouse
+  x += dx + mx * 0.025 * mouseForce; // suma de la posición del cosito y la influencia del mouse
+  y += dy + my * 0.025 * mouseForce;
+```
+
+Hasta aquí tendría un Walker que tiene un comportamiento diferente a uno básico, y se vería igual que uno, por lo que agregué entonces un pequeño sistema de partículas que siguen a la bolita principal utilizando una distribución Gaussiana. Siendo la media de la distribución 0, las partículas tienden a estar cerca al centro pero se ubican en un radio de 12 en toda dirección. Esta coordenada de la posición de la partícula se suma con la posición del punto principal dentro de un ciclo de 15 rotaciones por posición para que siempre lo siga un grupo de partículas.
+
+```jsx
+// partículas, en cada posición 15 partículas 
+  for (let i = 0; i < 15; i++) {
+    let gx = randomGaussian(0, 12);
+    let gy = randomGaussian(0, 12);
+
+    noStroke();
+    fill(131,45,81, 35);
+    circle(x + gx, y + gy, 7);
+  }
+```
+
+Ésta es nuestra bolita principal:
+
+```jsx
+// bolita principal
+fill(234, 105, 147, 100);
+circle(x, y, 22);
+```
+
+Y el incremento del tiempo por loop para que el ruido siga evolucionando:
+
+```jsx
+// tiempo para el ruido
+t += 0.01;
+```
+
+Por último, un límite para que el bichito no se salga de la pantalla:
+
+```jsx
+// para que no se slaga de la pantalla
+x = constrain(x, 0, width);
+y = constrain(y, 0, height);
+```
+
+Éste es el código completo:
+
+```jsx
+let x, y;
+let t = 0;
+
+function setup() {
+  createCanvas(740, 560);
+  background(207, 221, 157);
+
+  x = width / 2;
+  y = height / 2;
+}
+
+function draw() {
+  background(207, 221, 157, 15);
+  
+  let stepSize = levyFlight();
+
+  // posición del cosito,
+  let dx = map(noise(t), 0, 1, -stepSize, stepSize);
+  let dy = map(noise(t+1000), 0, 1, -stepSize, stepSize);
+  
+  let mx = mouseX - x; // posición del mouse menos la posición de la bolita
+  let my = mouseY - y;
+
+  // distancia de bolita al mouse
+  let distance = dist(x, y, mouseX, mouseY);
+
+  // mouse más cerca = más fuerza que lo atrae
+  let mouseForce = map(distance, 0, width, 1.5, 0);
+
+  // influencia del mouse
+  x += dx + mx * 0.025 * mouseForce; // suma de la posición del cosito y la influencia del mouse
+  y += dy + my * 0.025 * mouseForce;
+
+  // partículas, en cada posición 15 partículas 
+  for (let i = 0; i < 15; i++) {
+    let gx = randomGaussian(0, 12);
+    let gy = randomGaussian(0, 12);
+
+    noStroke();
+    fill(131,45,81, 35);
+    circle(x + gx, y + gy, 7);
+  }
+
+  // bolita principal
+  fill(234, 105, 147, 100);
+  circle(x, y, 22);
+
+  // tiempo para el ruido
+  t += 0.01;
+
+  // para que no se slaga de la pantalla
+  x = constrain(x, 0, width);
+  y = constrain(y, 0, height);
+}
+
+function levyFlight() {
+  while (true) {
+    let step = random(0, 50);   // candidato (tamaño del paso)
+    let probability = random(0, 1);
+
+    // cuanto más pequeño el paso, más probable que sea aceptado
+    if (probability < 1 / (step + 1)) {
+      return step;
+    }
+  }
+}
+
+```
+
+[**Link a proyecto de p5.js**](https://editor.p5js.org/elennc/sketches/SlIKgbUGm)
+
+![u1a7.gif](attachment:30e31e2a-6d61-434b-9915-590b0de5c5b5:u1a7.gif)
 
 
 ## Bitácora de reflexión
 
+### Actividad 08
+
+*En tu bitácora de aprendizaje. Responde con tus propias palabras a las siguientes preguntas.*
+
+1. *Describe la diferencia fundamental entre la aleatoriedad generada por `random()` y la apariencia de aleatoriedad del Ruido Perlin (`noise()`). ¿En qué tipo de situación usarías cada una?*
+    
+    Los valores generados por random( ) no siguen ningún patrón en específico, mientras que las de el Ruido Perlin son cercanas una de la otra, sin ser seguidas o predecibles. Random se usa cuando se quiere obtener un movimiento errático y totalmente descontrolado, mientras que el ruido actúa como un suavizante en el comportamiento del código.
+    
+2. *Explica con tus palabras qué es una distribución de probabilidad. ¿Qué diferencia visual produce una caminata aleatoria con una distribución uniforme versus una con una distribución normal?*
+    
+    Una caminata con distribución uniforme no tiene tendencias y todos los caminos son igualmente probables, por lo que es muy simple y totalmente impredecible. Una caminata con distribución Gaussiana o normal tiene una tendencia en su comportamiento, por lo que es más fácil predecir sus siguientes pasos o al menos hacerse una idea de cuál será su recorrido.
+    
+3. *¿Cuál es el papel de la aleatoriedad en el arte generativo? Menciona al menos dos funciones distintas que cumple*
+    
+    La aleatoriedad lo es todo en el arte generativo, pues es la encargada de generar suficientes posibilidades para que el artista pueda visualizar su idea y pulirla poco a poco (si desea) limitando más y más el programa.
+    
+4. *Piensa en tu obra final (Actividad 07). Describe uno de los conceptos de aleatoriedad que usaste y explica por qué fue una elección adecuada para lograr el efecto que buscabas.*
+    
+    Creo que el concepto más importante en mi trabajo fue el del Lévy Flight, pues es el que da ese comportamiento natural de “estar buscando algo” que permite recorrer mayor cantidad de la pantalla y hace que todo se vea más natural.
+    
+5. *¿Qué es un “paseo” o “caminata” (walk) en el contexto de la simulación? ¿Qué característica particular tiene una caminata de tipo “Lévy flight”?*
+    
+    Una caminata es un código que dibuja una secuencia de puntos, cada uno siendo un paso desde el anterior, escogiendo aleatoriamente entre arriba, abajo, derecha o izquierda para terminar con un trazo totalmente único y hecho por azar. Las caminatas con Lévy Flight son las que tienen una posibilidad, por muy pequeñas que sean, de dar un paso de mayor distancia al default (que hace una línea continua). Esta posibilidad permite que el Walker recorra mayor área de la pantalla.
 
 
