@@ -564,7 +564,7 @@ function levyFlight() {
 
 ```
 
-[**Link a proyecto de p5.js**](https://editor.p5js.org/elennc/sketches/SlIKgbUGm)
+[**Link a proyecto de p5.js**](https://editor.p5js.org/elennc/sketches/3jtzuYy7o)
 
 ![u1a7](https://github.com/user-attachments/assets/79052eed-9f7b-4bbd-b3a5-2a5313a18236)
 
@@ -595,6 +595,7 @@ function levyFlight() {
 5. *¿Qué es un “paseo” o “caminata” (walk) en el contexto de la simulación? ¿Qué característica particular tiene una caminata de tipo “Lévy flight”?*
     
     Una caminata es un código que dibuja una secuencia de puntos, cada uno siendo un paso desde el anterior, escogiendo aleatoriamente entre arriba, abajo, derecha o izquierda para terminar con un trazo totalmente único y hecho por azar. Las caminatas con Lévy Flight son las que tienen una posibilidad, por muy pequeñas que sean, de dar un paso de mayor distancia al default (que hace una línea continua). Esta posibilidad permite que el Walker recorra mayor área de la pantalla.
+
 
 
 
