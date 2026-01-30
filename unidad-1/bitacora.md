@@ -251,7 +251,7 @@ switch (color) {
 ```
 También quise hacer que cada punto sea de un color aleatorio de un total de 5, para lo que usé un switch-case.
 
-[**Link a proyecto de p5.js**](https://editor.p5js.org/elennc/full/yWX1rtb-v)
+[**Link a proyecto de p5.js**](https://editor.p5js.org/elennc/sketches/yWX1rtb-v)
 
 <img width="496" height="495" alt="image" src="https://github.com/user-attachments/assets/de31f330-e6d8-4a1e-b8da-d788033b885e" />
 
@@ -595,6 +595,7 @@ function levyFlight() {
 5. *¿Qué es un “paseo” o “caminata” (walk) en el contexto de la simulación? ¿Qué característica particular tiene una caminata de tipo “Lévy flight”?*
     
     Una caminata es un código que dibuja una secuencia de puntos, cada uno siendo un paso desde el anterior, escogiendo aleatoriamente entre arriba, abajo, derecha o izquierda para terminar con un trazo totalmente único y hecho por azar. Las caminatas con Lévy Flight son las que tienen una posibilidad, por muy pequeñas que sean, de dar un paso de mayor distancia al default (que hace una línea continua). Esta posibilidad permite que el Walker recorra mayor área de la pantalla.
+
 
 
 
