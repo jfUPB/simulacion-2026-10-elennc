@@ -266,12 +266,29 @@ La función lerp( ) y lerpColor( ) son funciones de interpolación, es decir, qu
 
 1. *1. ¿Qué observaste cuando usas cada una de las aceleraciones propuestas?*
 
-### Actividad 09
 
-### Actividad 10
 
 ## Bitácora de aplicación 
-
-
+### Actividad 09
+1. *Describe el concepto de **tu obra generativa.** Explica el concepto de tu obra generativa, qué regla aplicaste para la aceleración y por qué, si fue una decisión de diseño, o qué te evoca, si fue una exploración artística.*
+2. *El código de la aplicación.*
+3. *Un enlace al proyecto en el editor de p5.js.*
+4. *Selecciona capturas de pantalla representativas de tu pieza de arte generativa.*
 
 ## Bitácora de reflexión
+### Actividad 10
+*Enriquecido con esta información, te perdirá que crees algo inspirado en:*
+
+1. *Las ideas de Jared y Jeffrey*
+2. *En lo que trabajaste en esta unidad sobre vectores y motion 101.*
+
+*En tu bitácora de aprendizaje:
+1. Describe el concepto de **tu obra generativa.** Explica el concepto de tu obra generativa.
+2. El código de la aplicación.
+3. Un enlace al proyecto en el editor de p5.js.
+4. Selecciona capturas de pantalla representativas de tu pieza de arte generativa.*
+
+1. *1. Describe el concepto de **tu obra generativa.** Explica el concepto de tu obra generativa.*
+2. *2. El código de la aplicación.*
+3. *3. Un enlace al proyecto en el editor de p5.js.*
+4. *4. Selecciona capturas de pantalla representativas de tu pieza de arte generativa.*
