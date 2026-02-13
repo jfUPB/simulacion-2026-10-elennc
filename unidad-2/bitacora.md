@@ -7,7 +7,8 @@
 
 El trabajo que más me gustó es el que parece una arañita, “Crab People” de Raven Kwok. Me gusta mucho cuando algo virtual parece vivo e interactúa con el usuario, y en este proyecto es como si tuvieras una arañita de mascota que baila y sigue tu cursor. Es extremadamente creativo y satisfactiorio.
 
-![u2a1](https://github.com/user-attachments/assets/adeecd4b-0142-4eea-ac58-89bd3b1a0628)
+![u2a1](https://github.com/user-attachments/assets/1c5d6d40-65be-492d-a7e2-5d5d9e526b1b)
+
 
 ### Actividad 02
 
@@ -245,7 +246,8 @@ function drawArrow(base, vec, myColor) {
 }
 ```
 
-![u2a6](https://github.com/user-attachments/assets/60eb4da9-c09d-4595-9cb5-08397fef5781)
+![u2a6](https://github.com/user-attachments/assets/c2ba3bde-e0da-4244-b971-62024d1492c0)
+
 
 La función lerp( ) y lerpColor( ) son funciones de interpolación, es decir, que encuentran un valor que se encuentra entre dos otros valores. lerp( ) recibe 3 parámetros: A, el punto de inicio de interpolación, B, el punto final, y X, el punto entre A y B en el que me encuentro en este momento. lerp( ) asignará la posición 0 a A y la posición 1 a B, y utilizando un contador que sube de poco a poco (como interP en mi ejericio), se recorre el camino de A a B.
 
@@ -253,6 +255,10 @@ La función lerp( ) y lerpColor( ) son funciones de interpolación, es decir, qu
 
 1. *Cuál es el concepto del marco motion 101 y cómo se interpreta geométricamente.*
 2. *¿Cómo se aplica motion 101 en el ejemplo?*
+
+Motion 101 es básicamente el aplicar física, haciendo que la posición de un objeto se vea afectada por una velocidad que tiene tanto dirección como magnitud.
+
+En el ejemplo tenemos una objeto llamado Mover que tiene dos atributos que son la posición y la velocidad del mover, y se inicializan aleatoriamente. En la función de update( ) hacemos que en cada ciclo del código la última posición se sume a la velocidad para así generar movimiento en el Mover, que va en la dirección de la velocidad hasta que se choca con un borde de la pantalla. Esto es motion 101. :)
 
 ### Actividad 08
 
@@ -262,18 +268,423 @@ La función lerp( ) y lerpColor( ) son funciones de interpolación, es decir, qu
 - *Aceleración aleatoria.*
 - *Aceleración hacia el mouse.*
 
-*1. ¿Qué observaste cuando usas cada una de las aceleraciones propuestas?*
+Código base:
 
-1. *1. ¿Qué observaste cuando usas cada una de las aceleraciones propuestas?*
+```jsx
+class Mover {
+  constructor() {
+    this.position = createVector(random(width), random(height));
+    this.velocity = createVector(random(-2, 2), random(-2, 2));
+  }
 
+  update() {
+    this.position.add(this.velocity);
+  }
+
+  show() {
+    stroke(0);
+    strokeWeight(2);
+    fill(127);
+    circle(this.position.x, this.position.y, 48);
+  }
+
+  checkEdges() {
+    if (this.position.x > width) {
+      this.position.x = 0;
+    } else if (this.position.x < 0) {
+      this.position.x = width;
+    }
+
+    if (this.position.y > height) {
+      this.position.y = 0;
+    } else if (this.position.y < 0) {
+      this.position.y = height;
+    }
+  }
+}
+
+```
+
+- ***Aceleración constante:***
+
+Agregué un atributo de aceleración a la clase Mover que no depende de ninguna variable.
+
+```jsx
+// aceleración constante
+this.acceleration = createVector(0.05, 0.02);
+```
+
+Así como en el código original se suma la velocidad a la posición, sumo la aceleración a la velocidad para que esta aumente constantemente. También se agrega un límite para que la velocidad no sea infinita sino un poco más controlable.
+
+```jsx
+this.velocity.add(this.acceleration);
+this.velocity.limit(5);
+```
+
+El código queda así:
+
+```jsx
+class Mover {
+  constructor() {
+    this.position = createVector(random(width), random(height));
+    this.velocity = createVector(random(-2, 2), random(-2, 2));
+    // aceleración constante
+    this.acceleration = createVector(0.05, 0.02);
+  }
+
+  update() {
+    this.velocity.add(this.acceleration);
+    this.velocity.limit(5);
+    this.position.add(this.velocity);
+  }
+
+  show() {
+    stroke(0);
+    strokeWeight(2);
+    fill(127);
+    circle(this.position.x, this.position.y, 48);
+  }
+
+  checkEdges() {
+    if (this.position.x > width) {
+      this.position.x = 0;
+    } else if (this.position.x < 0) {
+      this.position.x = width;
+    }
+
+    if (this.position.y > height) {
+      this.position.y = 0;
+    } else if (this.position.y < 0) {
+      this.position.y = height;
+    }
+  }
+}
+
+```
+
+- ***Aceleración aleatoria:***
+
+Para tener aceleración aleatoria puedo simplemente modificar el atributo de aceleración del objeto y no inicializarlo en una constante sino iniciarlo vacío y en update( ) pedirle que genere un vector unitario aleatorio. Para controlar su intensidad multiplicamos el vector por 0.5 para que la aceleración sea pequeña y se pueda ver bien.
+
+```jsx
+this.acceleration = createVector();
+```
+
+```jsx
+update() {
+  this.acceleration = p5.Vector.random2D();
+  this.acceleration.mult(0.5); // qué tan fuerte es
+
+  this.velocity.add(this.acceleration);
+  this.velocity.limit(5);
+  this.position.add(this.velocity);
+}
+```
+
+Este es el código final:
+
+```jsx
+class Mover {
+  constructor() {
+    this.position = createVector(random(width), random(height));
+    this.velocity = createVector(random(-2, 2), random(-2, 2));
+    // aceleración constante
+    this.acceleration = createVector();
+  }
+
+  update() {
+  this.acceleration = p5.Vector.random2D();
+  this.acceleration.mult(0.5); // qué tan fuerte es
+
+  this.velocity.add(this.acceleration);
+  this.velocity.limit(5);
+  this.position.add(this.velocity);
+}
+  show() {
+    stroke(0);
+    strokeWeight(2);
+    fill(127);
+    circle(this.position.x, this.position.y, 48);
+  }
+
+  checkEdges() {
+    if (this.position.x > width) {
+      this.position.x = 0;
+    } else if (this.position.x < 0) {
+      this.position.x = width;
+    }
+
+    if (this.position.y > height) {
+      this.position.y = 0;
+    } else if (this.position.y < 0) {
+      this.position.y = height;
+    }
+  }
+}
+
+```
+
+- ***Aceleración hacia el mouse:***
+
+Lo primero que debo hacer es encontrar el vector que indica la posición del mouse. Como debo estar buscándolo constantemente esto se agrega dentro de update( ).
+
+```jsx
+let mouse = createVector(mouseX, mouseY);
+```
+
+Después tomamos la dirección del vector que apunta al mouse desde el objeto restándolos. Como solo necesita la dirección y no la magnitud de ese vector, podemos normalizar para volver a hacerlo unitario pero conservando dirección y después volver a multiplicar el vector por 0.5 para controlar que no sea demasiado rápido.
+
+```jsx
+this.acceleration = p5.Vector.sub(mouse, this.position); // mouse - posición
+this.acceleration.normalize();
+this.acceleration.mult(0.5); // qué tan fuerte es
+```
+
+Así queda el código: 
+
+```jsx
+class Mover {
+  constructor() {
+    this.position = createVector(random(width), random(height));
+    this.velocity = createVector(random(-2, 2), random(-2, 2));
+    // aceleración constante
+    this.acceleration = createVector();
+  }
+
+  update() {
+    let mouse = createVector(mouseX, mouseY);
+    
+  this.acceleration = p5.Vector.sub(mouse, this.position); // mouse - posición
+  this.acceleration.normalize();
+  this.acceleration.mult(0.5); // qué tan fuerte es
+    
+  this.velocity.add(this.acceleration);
+    this.velocity.limit(5);
+  this.position.add(this.velocity);
+}
+  show() {
+    stroke(0);
+    strokeWeight(2);
+    fill(127);
+    circle(this.position.x, this.position.y, 48);
+  }
+
+  checkEdges() {
+    if (this.position.x > width) {
+      this.position.x = 0;
+    } else if (this.position.x < 0) {
+      this.position.x = width;
+    }
+
+    if (this.position.y > height) {
+      this.position.y = 0;
+    } else if (this.position.y < 0) {
+      this.position.y = height;
+    }
+  }
+}
+
+```
+
+***¿Qué observaste cuando usas cada una de las aceleraciones propuestas?***
+
+Inicialmente s eme había olvidado limitar la magnitud de la velocidad por lo que crecía infinitamente y era imposible ver si estaba funcionando correctamente o no, pero después de que eso fue arreglado, es fácil ver las diferencias. Cuando la aceleración es constante, la bolita siempre se mueve en la misma dirección hasta tocar el borde de la pantalla, subiendo de velocidad progresivamente hasta llegar al límite. Cuando la aceleración es aleatoria, la bolita se mueve un poco como si estuviese perdida, cambiando constantemente de dirección y manteniéndose en la velocidad límite. Por último, cuando la aceleración apunta al mouse, la bolita intenta perseguirnos cuando estamos en pantalla.
 
 
 ## Bitácora de aplicación 
 ### Actividad 09
+
 1. *Describe el concepto de **tu obra generativa.** Explica el concepto de tu obra generativa, qué regla aplicaste para la aceleración y por qué, si fue una decisión de diseño, o qué te evoca, si fue una exploración artística.*
 2. *El código de la aplicación.*
 3. *Un enlace al proyecto en el editor de p5.js.*
 4. *Selecciona capturas de pantalla representativas de tu pieza de arte generativa.*
+
+Para mi obra quise volver a involucrar la idea de que mi código está vivo entonces escogí una abeja que vuela por el espacio y se acerca al mouse si está presente. Apliqué dos tipos de aceleración diferentes: cuando el mouse no está en pantalla la abeja se mueve con una aceleración aleatoria, por lo que su dirección está cambiando constantemente y hace que se vea más orgánica. Cuando el mouse está presente tiene una aceleración hacia él, calculando el vector que apunta de la abeja al mouse y utilizando su dirección.
+
+El código de sketch.js:
+
+```jsx
+let mover;
+
+function setup() {
+  createCanvas(560, 560);
+  mover = new Mover();
+  
+}
+
+function draw() {
+  background('rgb(196,214,247)');
+  
+  stroke('#FFC107');
+  fill('#FFC107');
+  
+  circle(80, 90, 80);
+  drawCloud(100,100,1)
+  drawCloud(350,200,2)
+  
+  drawGrass()
+  
+  drawFlowers();
+  
+  mover.update();
+  mover.show();
+}
+
+```
+
+El código de mover.js:
+
+```jsx
+class Mover {
+  constructor() {
+    this.position = createVector(random(width), random(height));
+    this.velocity = createVector(random(-1, 1), random(-1, 1));
+    this.acceleration = createVector(0, 0);
+  }
+
+  update() {
+    // atracción al mouse
+    let mouse = createVector(mouseX, mouseY);
+    let attraction = p5.Vector.sub(mouse, this.position);
+    attraction.normalize();
+    attraction.mult(0.15);
+
+    // ruido aleatorio
+    let jitter = p5.Vector.random2D();
+    jitter.mult(0.05);
+
+    // aceleración total
+    this.acceleration = p5.Vector.add(attraction, jitter);
+
+    // Motion 101
+    this.velocity.add(this.acceleration);
+    this.velocity.limit(4);
+    this.position.add(this.velocity);
+  }
+  
+
+  show() {
+    push();
+    translate(this.position.x, this.position.y);
+    rotate(this.velocity.heading());
+
+    drawBee();
+
+    pop();
+  }
+}
+
+function drawBee() {
+  // cuerpo
+  noStroke();
+  fill(255, 200, 0);
+  ellipse(0, 0, 30, 18);
+
+  // rayas
+  fill(0);
+  rect(-6, -9, 4, 18);
+  rect(2, -9, 4, 18);
+
+  // cabeza
+  fill(0);
+  ellipse(16, 0, 12, 12);
+
+  // alas
+  fill(255, 150);
+  ellipse(2, -12.5, 14, 20);
+  ellipse(2, 12.5, 14, 20);
+
+  // aguijón
+  fill(0);
+  triangle(-25, 0, -16, -3, -16, 3);
+  
+  // ojos
+  fill(255);
+  ellipse(18, -3, 6, 6);
+  ellipse(18, 3, 6, 6);
+
+  fill(0);
+  ellipse(18, -3, 4, 4);
+  ellipse(18, 3, 4, 4);
+  
+  // antenas
+  stroke(0);
+  strokeWeight(1);
+
+  line(18, 0, 30, -8);
+  line(18, 0, 30, 8);
+  
+  fill(0);
+	ellipse(30, -8, 2, 2);
+	ellipse(30, 8, 2, 2);
+  
+}
+
+function drawGrass() {
+  stroke(70, 150, 70);
+  strokeWeight(4);
+
+  let t = frameCount * 0.02;
+
+  for (let x = 0; x < width; x += 6) {
+    let h = noise(x * 0.2, t) * 120 + 100;
+    let sway = map(noise(x * 0.01, t), 0, 1, -8, 8);
+    line(x, height, x + sway, height - h);
+  }
+}
+
+function drawFlowers() {
+  noStroke();
+
+  for (let x = 20; x < width; x += 40) {
+    let h = noise(x * 0.05) * 200 + 100;
+    let y = height - h;
+
+    // tallo
+    stroke('#8BC34A');
+    strokeWeight(2);
+    line(x, height, x, y);
+
+    // flor
+    noStroke();
+    push();
+    translate(x, y);
+
+    let petalCount = 6;
+    let r = 6;
+
+    fill('#F074D5');
+    for (let i = 0; i < petalCount; i++) {
+      let angle = TWO_PI / petalCount * i;
+      let px = cos(angle) * r;
+      let py = sin(angle) * r;
+      ellipse(px, py, 6, 10);
+    }
+
+    // centro
+    fill('#FFEB3B');
+    ellipse(0, 0, 6, 6);
+
+    pop();
+  }
+}
+
+function drawCloud(x, y, s) {
+  noStroke();
+  fill(255);
+
+  ellipse(x, y, 60 * s, 40 * s);
+  ellipse(x + 30 * s, y - 10 * s, 50 * s, 35 * s);
+  ellipse(x + 60 * s, y, 60 * s, 40 * s);
+  ellipse(x + 30 * s, y + 10 * s, 70 * s, 45 * s);
+}
+
+```
+
+[LINK AL PROYECTO DE P5.J5](https://editor.p5js.org/elennc/full/XKYEMUfQw)
+
+![u2a9](https://github.com/user-attachments/assets/d5889df9-c92e-4835-9083-7bc6a5125e2d)
+
 
 ## Bitácora de reflexión
 ### Actividad 10
@@ -292,3 +703,4 @@ La función lerp( ) y lerpColor( ) son funciones de interpolación, es decir, qu
 2. *2. El código de la aplicación.*
 3. *3. Un enlace al proyecto en el editor de p5.js.*
 4. *4. Selecciona capturas de pantalla representativas de tu pieza de arte generativa.*
+
