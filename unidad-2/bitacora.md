@@ -688,19 +688,151 @@ function drawCloud(x, y, s) {
 
 ## Bitácora de reflexión
 ### Actividad 10
-*Enriquecido con esta información, te perdirá que crees algo inspirado en:*
-
-1. *Las ideas de Jared y Jeffrey*
-2. *En lo que trabajaste en esta unidad sobre vectores y motion 101.*
-
-*En tu bitácora de aprendizaje:
-1. Describe el concepto de **tu obra generativa.** Explica el concepto de tu obra generativa.
-2. El código de la aplicación.
-3. Un enlace al proyecto en el editor de p5.js.
-4. Selecciona capturas de pantalla representativas de tu pieza de arte generativa.*
-
 1. *1. Describe el concepto de **tu obra generativa.** Explica el concepto de tu obra generativa.*
 2. *2. El código de la aplicación.*
 3. *3. Un enlace al proyecto en el editor de p5.js.*
 4. *4. Selecciona capturas de pantalla representativas de tu pieza de arte generativa.*
+
+ Mi obra utiliza el mismo tipo de visual que el artista original, haciendo que 3 especies de bolitas se agrupen y se muevan como organismos. Utiliza motion 101 ya que calcula la velocidad dependiendo del vector de aceleración en su constructor, haciendo que las partículas se muevan como si estuvieran vivas y realmente cada una fuera su propio organismo. 
+
+```jsx
+let particles = [];
+let speciesCount = 3;
+let totalParticles = 1100;
+
+function setup() {
+  createCanvas(900, 500);
+  background(0);
+
+  for (let i = 0; i < totalParticles; i++) {
+    particles.push(new Particle());
+  }
+}
+
+function draw() {
+  background(0);
+
+  let centers = calculateCenters();
+  let mouseForces = calculateMouseForces(centers);
+
+  for (let p of particles) {
+    p.applyGroupForces(particles);
+    p.applyOrganismMouseForce(mouseForces);
+    p.update();
+    p.wrapEdges();
+    p.display();
+  }
+}
+class Particle {
+  constructor() {
+    this.pos = createVector(random(width), random(height));
+    this.vel = p5.Vector.random2D().mult(0.4);
+    this.acc = createVector();
+    this.species = floor(random(speciesCount));
+    this.size = 6;
+  }
+
+  // 🧬 cohesión del organismo
+  applyGroupForces(others) {
+    for (let o of others) {
+      if (o === this) continue;
+      if (o.species !== this.species) continue;
+
+      let dir = p5.Vector.sub(o.pos, this.pos);
+      let d = dir.mag();
+      dir.normalize();
+
+      if (d < 12) {
+        dir.mult(-0.6);
+        this.acc.add(dir);
+      } else if (d < 70) {
+        dir.mult(0.35);
+        this.acc.add(dir);
+      }
+    }
+  }
+
+  // 🖱️ fuerza grupal REAL del mouse
+  applyOrganismMouseForce(mouseForces) {
+    let f = mouseForces[this.species];
+    if (!f) return;
+
+    this.acc.add(f);
+  }
+
+  update() {
+    this.vel.add(this.acc);
+    this.vel.limit(2);
+    this.pos.add(this.vel);
+    this.acc.mult(0);
+    this.vel.mult(0.93);
+  }
+
+  wrapEdges() {
+    if (this.pos.x < 0) this.pos.x = width;
+    if (this.pos.x > width) this.pos.x = 0;
+    if (this.pos.y < 0) this.pos.y = height;
+    if (this.pos.y > height) this.pos.y = 0;
+  }
+
+  display() {
+    noStroke();
+    fill(colorBySpecies(this.species));
+    circle(this.pos.x, this.pos.y, this.size);
+  }
+}
+function calculateCenters() {
+  let centers = [];
+  let counts = [];
+
+  for (let i = 0; i < speciesCount; i++) {
+    centers[i] = createVector(0, 0);
+    counts[i] = 0;
+  }
+
+  for (let p of particles) {
+    centers[p.species].add(p.pos);
+    counts[p.species]++;
+  }
+
+  for (let i = 0; i < speciesCount; i++) {
+    if (counts[i] > 0) {
+      centers[i].div(counts[i]);
+    }
+  }
+
+  return centers;
+}
+function calculateMouseForces(centers) {
+  let forces = [];
+
+  let mouse = createVector(mouseX, mouseY);
+
+  for (let i = 0; i < speciesCount; i++) {
+    forces[i] = createVector(0, 0);
+
+    let dir = p5.Vector.sub(centers[i], mouse);
+    let d = dir.mag();
+
+    if (d < 180) {
+      dir.normalize();
+      let strength = map(d, 0, 180, 2.5, 0);
+      dir.mult(strength);
+      forces[i] = dir;
+    }
+  }
+
+  return forces;
+}
+function colorBySpecies(s) {
+  if (s === 0) return color('rgb(251,130,130)');
+  if (s === 1) return color('rgb(168,151,219)');
+  return color('#8BC34A');
+}
+
+```
+
+[LINK AL PROYECTO](https://editor.p5js.org/elennc/full/ZhsHGYZQP)
+
+![u2a10](https://github.com/user-attachments/assets/3fc41e07-71e1-4ab3-ae45-f5b178e26ba5)
 
