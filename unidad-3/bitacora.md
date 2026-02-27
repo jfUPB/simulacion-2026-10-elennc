@@ -519,4 +519,200 @@ function drawBackgroundClovers() {
 
 ## Bitácora de reflexión
 
+### Actividad 05
+
+1. *Explica detalladamente en tu bitácora ¿Qué es el marco de movimiento motion 101 y cómo se relacionan: fuerza, aceleración, velocidad y posición?*
+
+Motion 101 es básicamente el uso de conceptos de física básicos, como la relación entre posición, velocidad y aceleración, y cómo esto afecta el movimiento de un objeto dependiendo del tiempo, masa, etc. La posición cambia por la velocidad, y la velocidad cambia por la aceleración, y la aceleración se afecta por la fuerza aplicada a un sistema.
+
+1. *Vas a analizar [este](https://youtu.be/VewUU7mYzTk?si=xPbovNR9X3pY3Tkb) video sobre el artista Alexander Calder. Selecciona una de sus obras y luego crea una obra generativa inspirada en la obra de Calder que seleccionaste y el marco de movimiento motion 101 con fuerzas que trabajamos en esta unidad.*
+
+```jsx
+let pieces = [];
+let springs = [];
+
+function setup() {
+  createCanvas(700, 600);
+
+  // Crear piezas
+  pieces.push(new Piece(width/2, 80, true)); // punta fija
+
+  for (let i = 1; i < 5; i++) {
+  pieces.push(new Piece(width/2 + random(-120,120), 150 + i*70));
+  }
+  // Conectar piezas con resortes
+  for (let i = 0; i < pieces.length - 1; i++) {
+    springs.push(new Spring(pieces[i], pieces[i+1], 80));
+  }
+}
+
+function draw() {
+  background('rgb(189,189,229)');
+
+  stroke(0);
+  line(width/2, 0, pieces[0].pos.x, pieces[0].pos.y);
+  
+  // Actualizar resortes primero
+  for (let s of springs) {
+    s.update();
+    s.display();
+  }
+
+  // Actualizar piezas
+  for (let p of pieces) {
+    p.applyWind();
+    p.applyDrag();
+
+    if (mouseIsPressed) {
+      p.applyMouseGravity();
+    }
+
+    p.update();
+    p.checkEdges();
+    p.display();
+  }
+}
+
+class Piece {
+  constructor(x, y, fixed = false) {
+  this.pos = createVector(x, y);
+  this.vel = createVector();
+  this.acc = createVector();
+  this.mass = random(1, 2);
+  this.size = random(25, 50);
+  this.fixed = fixed;
+
+  this.color = random([
+    color(200,0,0),
+    color(0),
+    color(255,200,0),
+    color(255)
+  ]);
+}
+
+  applyForce(force) {
+    let f = force.copy();
+    f.div(this.mass);
+    this.acc.add(f);
+  }
+
+  // 🌬 Viento orgánico
+  applyWind() {
+    let angle = noise(frameCount * 0.01 + this.pos.x * 0.01) * TWO_PI;
+    let wind = p5.Vector.fromAngle(angle);
+    wind.mult(0.05);
+    this.applyForce(wind);
+  }
+
+  // 🌫 Resistencia al aire
+  applyDrag() {
+    let drag = this.vel.copy();
+    drag.mult(-1);
+    drag.normalize();
+
+    let speed = this.vel.mag();
+    let dragMagnitude = 0.02 * speed * speed;
+
+    drag.mult(dragMagnitude);
+    this.applyForce(drag);
+  }
+
+  // 🖱 Gravedad del mouse (solo cuando hay click)
+  applyMouseGravity() {
+
+  let mouse = createVector(mouseX, mouseY);
+  let force = p5.Vector.sub(mouse, this.pos);
+
+  let distance = force.mag();
+  distance = constrain(distance, 50, 400);
+
+  force.normalize();
+
+  // Más fuerte y más visible
+  let strength = map(distance, 50, 400, 2, 0.05);
+
+  force.mult(strength);
+  this.applyForce(force);
+}
+
+  update() {
+  if (this.fixed) {
+    this.vel.mult(0);
+    this.acc.mult(0);
+    return;
+  }
+
+  this.vel.add(this.acc);
+  this.pos.add(this.vel);
+  this.acc.mult(0);
+}
+
+  checkEdges() {
+    let r = this.size / 2;
+
+    if (this.pos.x > width - r) {
+      this.pos.x = width - r;
+      this.vel.x *= -0.9;
+    }
+
+    if (this.pos.x < r) {
+      this.pos.x = r;
+      this.vel.x *= -0.9;
+    }
+
+    if (this.pos.y > height - r) {
+      this.pos.y = height - r;
+      this.vel.y *= -0.9;
+    }
+
+    if (this.pos.y < r) {
+      this.pos.y = r;
+      this.vel.y *= -0.9;
+    }
+  }
+
+  display() {
+    noStroke();
+    fill(this.color);
+    ellipse(this.pos.x, this.pos.y, this.size);
+  }
+}
+
+class Spring {
+  constructor(a, b, len) {
+    this.a = a;
+    this.b = b;
+    this.len = len;
+    this.k = 0.01;
+  }
+
+  update() {
+    let force = p5.Vector.sub(this.b.pos, this.a.pos);
+    let d = force.mag();
+    let stretch = d - this.len;
+
+    force.normalize();
+    force.mult(-this.k * stretch);
+
+    this.b.applyForce(force);
+    force.mult(-1);
+    this.a.applyForce(force);
+  }
+
+  display() {
+    stroke(0);
+    line(
+      this.a.pos.x, this.a.pos.y,
+      this.b.pos.x, this.b.pos.y
+    );
+  }
+}
+```
+
+Éste código es un móvil estilo Alexander Calder colgando del techo, que tiene resistencia al aire cuando una fuerza de viento se le aplica, pero además hay una atracción gravitacional hacia el mouse cuando se hace click.
+
+![u3a5](https://github.com/user-attachments/assets/ebc92071-541f-40f6-ba22-4481bdfca7ac)
+
+
+[LINK AL PROYECTO](https://editor.p5js.org/elennc/full/Z-dmbkDX9)
 
