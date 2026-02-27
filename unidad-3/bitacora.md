@@ -354,7 +354,7 @@ function draw() {
 
   let distanceToClover = p5.Vector.dist(ladyPos, cloverPos);
 
-  // 🌸 ZONA DE CAPTURA
+  // para que no tiemble
   if (distanceToClover < captureRadius && !mouseIsPressed) {
     ladyPos = cloverPos.copy();
     ladyVel.mult(0);
@@ -363,7 +363,7 @@ function draw() {
     return;
   }
 
-  // 💨 RESISTENCIA DEL AIRE
+  // RESISTENCIA DEL AIRE
   let speed = ladyVel.mag();
   let dragMagnitude = dragCoefficient * speed * speed;
 
@@ -375,7 +375,7 @@ function draw() {
     ladyAcc.add(drag);
   }
 
-  // 🍀 GRAVEDAD SUAVE AL TRÉBOL
+  // gravedad al trébol
   let gravityForce = p5.Vector.sub(cloverPos, ladyPos);
   let distance = gravityForce.mag();
   distance = constrain(distance, 30, 300);
@@ -386,7 +386,7 @@ function draw() {
 
   ladyAcc.add(gravityForce);
 
-  // 🖱 FUERZA HACIA EL MOUSE
+  // gravedad al mouse
   if (mouseIsPressed) {
     let mouseForce = createVector(mouseX, mouseY);
     mouseForce.sub(ladyPos);
@@ -508,3 +508,4 @@ function drawBackgroundClovers() {
 [LINK AL PROYECTO](https://editor.p5js.org/elennc/full/cl41s3Bjo)
 
 ## Bitácora de reflexión
+
