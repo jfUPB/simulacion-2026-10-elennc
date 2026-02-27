@@ -429,15 +429,25 @@ function drawLadybug() {
   ellipse(-8, -6, 5);
   ellipse(-8, 6, 5);
   ellipse(-1, 0, 7);
-
+  
+  
   fill(255);
+  rotate( -0.025);
   ellipse(6, 0, 3);
-
+  
   fill(255);
-  ellipse(13, -6, 7, 4);
-  ellipse(13, 6, 7, 4);
-
-  pop();
+  
+  push()
+  translate(13, -6)
+  rotate( 0.3);
+  ellipse(0, 0, 7, 4);
+  pop()
+  
+  push()
+  translate(13, 6)
+  rotate( -0.3);
+  ellipse(0, 0, 7, 4);
+  pop()
 }
 
 function drawClover() {
@@ -508,4 +518,5 @@ function drawBackgroundClovers() {
 [LINK AL PROYECTO](https://editor.p5js.org/elennc/full/cl41s3Bjo)
 
 ## Bitácora de reflexión
+
 
