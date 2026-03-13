@@ -462,9 +462,15 @@ Realmente no hay mayor cambio entre la aplicación de aleatorieidad y fuerzas en
 
 ### Actividad 08
 
+Básicamente, en cada frame estoy dibujando 24 círculos repartidos uniformemente por la pantalla pero a cada uno le incremento un poco como el momento de la onda seno en el que está, como 24 ondas desfasadas, pero como están distribuidas uniformemente y el cambio de fase es constante se ve como si fuera una sola onda de seno.
+
 ### Actividad 09
 
+Lo que necesito para hacer que ahora tenga dos resortes es volver a crear un objeto que se comporte exactamente igual, pero el único cambio es que por default el objeto de resorte tiene su ancla en la parte superior de la pantalla, que funciona para el primero, pero para el segundo resorte debo modificarlo y decir que el nuevo pivote es el centro de la masa del primer resorte, para que estén encadenados y el segundo resorte se mueva dependiendo del primero.
+
 ### Actividad 10
+
+Igual que en el ejemplo de resortes, este sistema tiene como default el spawn point de la cuerda en un punto superior de la pantalla y necesitamos crear un nuevo péndulo que tenga su pivote en el centro de la masa del péndulo anterior.
 
 ## Bitácora de aplicación 
 
@@ -505,9 +511,8 @@ function draw() {
 
   // dibujar objetivo
   if(target){
-    fill(155, 194, 16);
-    noStroke();
-    circle(target.x,target.y,10);
+    translate(target.x,target.y);
+    drawFlower()
   }
 }
 
@@ -637,7 +642,7 @@ class Butterfly{
     noStroke();
 
     if(this.dragging){
-      fill(255, 179, 224);
+      fill('rgb(255,156,209)');
     }else{
       fill(255, 74, 181);
     }
@@ -707,10 +712,35 @@ class Butterfly{
   }
 
 }
+
+function drawFlower() {
+  noStroke();
+
+    push();
+
+    let petalCount = 6;
+    let r = 6;
+
+    fill('#F074D5');
+    for (let i = 0; i < petalCount; i++) {
+      let angle = TWO_PI / petalCount * i;
+      let px = cos(angle) * r;
+      let py = sin(angle) * r;
+      ellipse(px, py, 10, 10);
+    }
+
+    // centro
+    fill('#FFEB3B');
+    ellipse(0, 0, 6, 6);
+
+    pop();
+  
+}
 ```
 
-![u4a11.gif](attachment:4a97585d-f769-486a-9fd9-f9d644094e17:u4a11.gif)
+
 
 [LINK AL PROYECTO](https://editor.p5js.org/elennc/full/PU73WA43t)
 
 ## Bitácora de reflexión
+
