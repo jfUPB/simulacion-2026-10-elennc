@@ -744,3 +744,7 @@ function drawFlower() {
 
 ## Bitácora de reflexión
 
+[LINK DIAGRAMA](https://excalidraw.com/#json=AXz-r6r7qljFWUAdrbd7t,r9MNVm6daA5NXs9Le-2mwA)
+
+Como profesionalmente estoy más enfocada hacia lo 2D, creo que esta es una buena opción para hacer algo como un portafolio interactivo, en el que todavía sigo teniendo libertad de seguir con mi estilo gráfico pero llama más la atención de la gente y muestra más versatilidad y creatividad.
+
