@@ -178,6 +178,210 @@ Para la modificación que elegiste, responde:
     Porque cambié solo elementos que están dentro de sus respectivas clases evitando que mis cambios afecten a todo el proyecto. Además utilicé push( ) y pull( ) para crear grupos y hacer cambios en partes específicas del código.
 
 ## Bitácora de aplicación 
+### Actividad 05
+
+**Concepto:** Quise representar el ciclo de vida de las hojas de los árboles. Las hojas nacen verdes, y lentamente se transforman a cafés, y al caer al piso se descomponen y desaparecen.
+
+**Boceto:** 
+
+<img width="1368" height="270" alt="Captura de pantalla 2026-03-27 100905" src="https://github.com/user-attachments/assets/031d13bb-58a6-422b-aede-4674a477f58a" />
+<img width="487" height="392" alt="Captura de pantalla 2026-03-27 101023" src="https://github.com/user-attachments/assets/91c8ec65-495f-4ab5-bbbd-f65c2dd82e84" />
+
+
+```jsx
+let leaves = [];
+let windForce = 0;
+let windTimer = 0;
+
+function setup() {
+  createCanvas(600, 600);
+}
+
+function draw() {
+  background(200, 230, 255);
+  noStroke()
+  fill('#73A23C')
+  rect(0,400,600, 250)
+
+  drawTree();
+
+  // viento temporal
+  if (windTimer > 0) {
+    windForce = 0.2;
+    windTimer--;
+  } else {
+    windForce = 0;
+  }
+
+  // generar hojas constantemente
+  if (random() < 0.05 + windForce) {
+    leaves.push(new Leaf(random(width/2 - 50, width/2 + 50), 150));
+  }
+
+  // actualizar hojas
+  for (let i = leaves.length - 1; i >= 0; i--) {
+  let leaf = leaves[i];
+
+    leaf.applyForce(createVector(windForce, 0.1)); // viento + gravedad
+    leaf.update();
+    leaf.display();
+
+    // transición a "muerte"
+    if (leaf.isDead()) {
+      leaves.splice(i, 1);
+    }
+
+    // si toca el suelo, se transforma
+    if (leaf.pos.y > height - 120 && leaf instanceof Leaf && !(leaf instanceof FadingLeaf)) {
+      leaves[i] = new FadingLeaf(leaf.pos.x, leaf.pos.y, leaf.colorProgress);
+    }
+  }
+}
+
+// 🌳 árbol 
+function drawTree() {
+  
+  canvas=createGraphics(width,height)
+  
+  push()
+    canvas.translate(300,300)
+    canvas.noStroke()
+    canvas.fill(189, 169, 115);
+    canvas.rectMode(CENTER)
+    canvas.rect(0, 0, 90, 300);
+    //canvas.fill('red')
+    canvas.ellipse(-45,150,70)
+    canvas.ellipse(45,150,70)
+    canvas.erase()
+    //canvas.rectMode(CENTER)
+    canvas.rect(0,200,600,100)
+    canvas.noErase()
+  
+    
+  
+    canvas.fill(50, 150, 50);
+    canvas.ellipse(0, -150, 200, 200);
+    canvas.ellipse(-80, -50, 200, 200);
+    canvas.ellipse(80, -50, 200, 200);
+  pop()
+  
+  image(canvas,0,0)
+}
+
+// 🖱 interacción
+function mousePressed() {
+  windTimer = 30; // dura ~1 segundo
+}
+
+// 🍃 clase base
+class Leaf {
+  constructor(x, y) {
+    this.pos = createVector(x, y);
+    this.vel = createVector(0, random(1, 2));
+    this.acc = createVector(0, 0);
+
+    // ciclo de vida
+    this.age = 0;
+    this.maxAge = random(200, 300);
+
+    // color (0 = verde, 1 = café)
+    this.colorProgress = 0;
+
+    // 🌬️ zigzag (Perlin noise)
+    this.xOffset = random(1000);
+    this.swayAmount = random(0.5, 2);
+    this.noiseSpeed = random(0.01, 0.03);
+
+    // 🍂 rotación
+    this.angle = random(TWO_PI);
+    this.rotationSpeed = random(-0.05, 0.05);
+  }
+
+  applyForce(force) {
+    this.acc.add(force);
+  }
+
+  update() {
+    // física básica
+    this.vel.add(this.acc);
+    this.pos.add(this.vel);
+    this.acc.mult(0);
+
+    // 🌿 zigzag suave
+    let sway = map(noise(this.xOffset), 0, 1, -1, 1);
+    this.pos.x += sway * this.swayAmount;
+    this.xOffset += this.noiseSpeed;
+
+    // 🍂 rotación
+    this.angle += this.rotationSpeed;
+
+    // ⏳ envejecimiento
+    this.age++;
+
+    // 🎨 cambio de color progresivo
+    this.colorProgress = this.age / this.maxAge;
+    this.colorProgress = constrain(this.colorProgress, 0, 1);
+  }
+
+  display() {
+    // transición verde → amarillo → café
+    let green = color('#8BC34A');
+    let yellow = color(220, 180, 50);
+    let brown = color(150, 80, 20);
+
+    let mid = lerpColor(green, yellow, this.colorProgress);
+    let finalColor = lerpColor(mid, brown, this.colorProgress);
+
+    push();
+    translate(this.pos.x, this.pos.y);
+    rotate(this.angle);
+
+    noStroke();
+    fill(finalColor);
+    ellipse(0, 0, 24, 12);
+
+    pop();
+  }
+
+  // 💀 clave para el sistema (Nature of Code style)
+  isDead() {
+    return this.age > this.maxAge;
+  }
+}
+
+// 🍂 hoja que se descompone (hereda de Leaf)
+class FadingLeaf extends Leaf {
+  constructor(x, y, progress) {
+    super(x, y);
+    this.lifespan = 255;
+    this.colorProgress = progress;
+    this.vel = createVector(0, 0); // ya no se mueve
+  }
+
+  update() {
+    this.lifespan -= 3;
+  }
+
+  display() {
+    let brown = color(150, 80, 20, this.lifespan);
+    noStroke()
+    fill(brown);
+    ellipse(this.pos.x, this.pos.y, 24, 12);
+  }
+
+  isDead() {
+    return this.lifespan <= 0;
+  }
+}
+```
+<img width="746" height="730" alt="Captura de pantalla 2026-03-27 101544" src="https://github.com/user-attachments/assets/7686a23a-1741-4ad3-b648-d992e2f92e4c" />
+<img width="743" height="636" alt="Captura de pantalla 2026-03-27 101647" src="https://github.com/user-attachments/assets/e284a619-961b-484f-986c-d4245a70111c" />
+<img width="741" height="732" alt="Captura de pantalla 2026-03-27 101626" src="https://github.com/user-attachments/assets/b28f9fad-81fe-4ffb-bf6c-7404c5b9eb7c" />
+
+
+
+[LINK DEL PROYECTO](https://editor.p5js.org/elennc/full/1E5gVf56Y)
+
 
 
 ## Bitácora de reflexión
