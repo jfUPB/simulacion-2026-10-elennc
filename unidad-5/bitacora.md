@@ -385,3 +385,54 @@ class FadingLeaf extends Leaf {
 
 
 ## Bitácora de reflexión
+
+### Actividad 06
+
+Describe con tus propias palabras cada uno de estos 10 principios:
+
+1. Una partícula es una entidad con estado.
+    
+    Básicamente una partícula es un objeto que tiene condición, como un tiempo de vida.
+    
+2. Una partícula tiene ciclo de vida.
+    
+    Una partícula es un objeto que no puede existir por siempre ya que al producirse muchas se consume mucha memoria, entonces solo pueden existir por un tiempo limitado antes de ser eliminadas de código.
+    
+3. Un sistema de partículas gestiona colecciones dinámicas de elementos.
+    
+    Un sistema de partículas es un grupo de objetos que cada uno se ve afectado por fuerzas y dinámica en general. y el encargado de organizar todos estos elementos es el sistema.
+    
+4. La creación y eliminación de partículas no es un detalle técnico menor, sino parte central del modelo.
+    
+    Ya que normalmente el sistema non soportaría una cantidad infinita de partículas acumulándose es indispensable el matar a las partículas cuando dejan de ser útiles para contar la historia que queremos.
+    
+5. Debe haber separación entre la lógica de una partícula individual y la lógica del sistema/emisor.
+    
+    La partícula individual tiene sus propias dinámicas, pero un sistema es el encargado de generar estos objetos sin modificar dichas dinámicas, entonces deben estar separados pero poder comunicarse entre sí.
+    
+6. Un emisor o particle system es una abstracción importante.
+    
+    Igual que en el punto anterior, es importante separar el objeto de partícula con el pedazo de código que hace que se generen en gran cantidad, para así tener mayor control sobre el resultado final.
+    
+7. Pueden existir sistemas de sistemas.
+    
+    Es posible tener un sistema que en vez de gestionar partículas para poder generar una cantidad mayor de ellas genere sistemas que se encarguen de eso mismo, para así tener múltiples sistemas de partículas en un mismo código.
+    
+8. Puede haber heterogeneidad usando herencia y polimorfismo.
+    
+    Aunque se use herencia y polimorfismo se pueden distinguir objetos de otros similares ya que es posible sobreescribir cualquier atributo o método según la necesidad. No solo por ser padre e hijo significa que dos clases son iguales.
+    
+9. Las partículas pueden responder a fuerzas globales y locales.
+    
+    Las partículas tienen fuerzas locales como lo puede ser la fuerza de un repeller, que afecta a las demás partículas pero no les pertenece a todas por igual, por así decirlo, mientras que hay otras fuerzas como la gravedad que no tienen un “cuerpo” específico sino que afectan a todo por igual.
+    
+10. La representación visual puede variar sin cambiar el principio algorítmico de fondo.
+    
+    Hay infinitas formas de representar visualmente los principios de los sistemas de partículas, pero no hay necesidad de cambiar el funcionamiento básico sino irse más a lo específico como colores, formas, tipos de movimiento más específicos, etc. pero al final sigue siendo un sistema de partículas con todas las partes necesarias.
+    
+
+**Parte 2 — Transferencia a otra herramienta**
+
+Piensa en tu pieza del Apply: si la quisieras recrear en Unity (o TouchDesigner, o Blender), ¿Qué se mantendría igual y qué cambiaría? ¿Qué partes de tu diseño son independientes de la herramienta?
+
+Para recrear mi pieza, aparte del hecho de que lo visual es 2D, podría igualmente funcionar en otros problemas, pues supondría que las partículas en estos programas tienen funcionamientos similares. Probablemente tendría que optimizar un poco puesto que es probable que las partículas pesen más, pero igualmente tendría que seguir el principio de “matar” las partículas que ya no están en uso, entender que cada partícula es un objeto individual que funciona para un grupo mayor.
