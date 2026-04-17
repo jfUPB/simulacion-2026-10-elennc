@@ -156,8 +156,12 @@ Para contemplativa tal vez utilizaría un flow field con baja velocidad, que se 
     - audio: controla el color del líquido, el tamaño de las estrellas y su opacidad.
 4. ***Boceto***
     <img width="2360" height="1640" alt="Untitled_Artwork (8)" src="https://github.com/user-attachments/assets/7d287862-f613-4a3b-a311-db9c8329aaed" />
-    
-5. ***Código***
+
+5. ***Moodboard***
+    <img width="1920" height="1080" alt="Untitled design" src="https://github.com/user-attachments/assets/098eacea-65bc-43ce-8c0b-3f148f6415eb" />
+
+   
+6. ***Código***
 
 ```jsx
 let song;
