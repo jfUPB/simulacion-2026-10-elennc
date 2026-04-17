@@ -183,7 +183,8 @@ let fireflies = [];
 let ripples = [];
 
 function preload() {
-  song = loadSound('Dreamer (Acoustic).mp3');
+  //song = loadSound('Dreamer (Acoustic).mp3');
+  song = loadSound('Song of the Stars.mp3');
 }
 
 function setup() {
