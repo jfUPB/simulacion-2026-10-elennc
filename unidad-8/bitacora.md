@@ -150,4 +150,10 @@ El pasar el sistema a Blender me ayudó a visualizar de mejor forma la relación
     
     [LINK DE YOUTUBE](https://youtu.be/rozLYRUmplY)
 
+   
+
+https://github.com/user-attachments/assets/f20d43bc-a4f4-43ae-8d69-c5bb56c9c914
+
+
+
 ## Bitácora de reflexión
